@@ -18,30 +18,109 @@ def blankImage(height, width):
 """
 Takes in a black and white image. 
 Determines whether the upper third of the picture has white. 
-Returns 1 if true, 0 if false
+Returns 1 if true
 """
 def isUp(image): 
-    #Creates a mask image
+    #Creates a bank image the size of the area we want to cover
     width, height = frameSize(image)
     blank = blankImage (height/3, width)
-    cv2.imshow("1", blank)
+    #cv2.imshow("1", blank)
     
     #crop and leave the top third
     crop_Up = image[0:height/3, 0:width]
-    cv2.imshow("2", crop_Up)
+    cv2.imshow("Up", crop_Up)
     
     #deterines if the mean number of pixels has increased passed a threshold
     image_count = np.mean(crop_Up)
     blank_count = np.mean(blank)
-    #print ("blank is",blank_count)
-    #print ("image is ",image_count)
     if (image_count > blank_count) and (image_count - blank_count > 5): 
-        print "UP", image_count
+        #print "UP", image_count
         return 1
+
+"""
+Takes in a black and white image. 
+Determines whether the lower portion of the picture has white. 
+Returns 1 if true
+"""
+def isDown(image): 
+    #Creates a bank image the size of the area we want to cover
+    width, height = frameSize(image)
+    blank = blankImage (height/3, width)    
     
+    #Crop and leave the lower portion
+    crop_Down = image[height - (height/3):height, 0:width]
+    cv2.imshow("Down", crop_Down)
+    
+    #deterines if the mean number of pixels has increased passed a threshold
+    image_count = np.mean(crop_Down)
+    blank_count = np.mean(blank)
+    if (image_count > blank_count) and (image_count - blank_count > 5): 
+        #print "Down", image_count
+        return 1    
+
+"""
+Takes in a black and white image. 
+Determines whether the left portion of the picture has white. 
+Returns 1 if true
+"""
+def isLeft(image): 
+    #Creates a bank image the size of the area we want to cover
+    width, height = frameSize(image)
+    blank = blankImage (height, width/3)
+    #cv2.imshow("left blank", blank)
+    
+    #Crop and leave the left portion
+    crop_Left = image[0:height, 0:width/3]
+    cv2.imshow("Left", crop_Left)
+    
+    #deterines if the mean number of pixels has increased passed a threshold
+    image_count = np.mean(crop_Left)
+    blank_count = np.mean(blank)
+    if (image_count > blank_count) and (image_count - blank_count > 5): 
+        #print "Left", image_count
+        return 1    
+
+"""
+Takes in a black and white image. 
+Determines whether the right portion of the picture has white. 
+Returns 1 if true
+"""
+def isRight(image): 
+    #Creates a bank image the size of the area we want to cover
+    width, height = frameSize(image)
+    blank = blankImage (height, width/3)
+    #cv2.imshow("right blank", blank)
+    
+    #Crop and leave the right portion
+    crop_Right = image[0:height, width - (width/3):width]
+    cv2.imshow("Right", crop_Right)
+    
+    #deterines if the mean number of pixels has increased passed a threshold
+    image_count = np.mean(crop_Right)
+    blank_count = np.mean(blank)
+    if (image_count > blank_count) and (image_count - blank_count > 5): 
+        #print "Right", image_count
+        return 1   
+
+
+"""
+Instead of having the main function call out the 4 border-
+checking functions, this function checks all of them and calls for corrective 
+measures. 
+"""
+def checkBoundaries(image):
+    if isRight(image) == 1: 
+        print "Rightoooo" #Instead of this print we would call a corerctive measure function
+    if isLeft(image) == 1:
+        print "Leftoooo" # Correective measure call
+    if isUp(image) == 1: 
+        print "Upoooo"
+    if isDown(image): 
+        print "Downoo"
+
 def test():
     a = blankImage(720, 1280)
-    isUp(a)
+    isRight(a)
 #test()
 
 """
@@ -71,11 +150,11 @@ def main():
             #print "Red Detected"
             #print meanRed
         
-        isUp(Red_thresh)
+        checkBoundaries(Red_thresh)
             
         # Display the resulting frame
         cv2.imshow('frame', frame)
-        cv2.imshow('thresh', Red_thresh)
+        #cv2.imshow('thresh', Red_thresh)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     
