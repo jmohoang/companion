@@ -2,6 +2,11 @@ import cv2
 import numpy as np
 
 """
+Below are constant variables throughout the program
+"""
+BOUNDARY_SIZE = 6 #Denominator for the boundary proportion
+
+"""
 Takes in an image and returns its height and width
 """
 def frameSize(image): 
@@ -23,11 +28,11 @@ Returns 1 if true
 def isUp(image): 
     #Creates a bank image the size of the area we want to cover
     width, height = frameSize(image)
-    blank = blankImage (height/3, width)
+    blank = blankImage (height/BOUNDARY_SIZE, width)
     #cv2.imshow("1", blank)
     
     #crop and leave the top third
-    crop_Up = image[0:height/3, 0:width]
+    crop_Up = image[0:height/BOUNDARY_SIZE, 0:width]
     cv2.imshow("Up", crop_Up)
     
     #deterines if the mean number of pixels has increased passed a threshold
@@ -45,10 +50,10 @@ Returns 1 if true
 def isDown(image): 
     #Creates a bank image the size of the area we want to cover
     width, height = frameSize(image)
-    blank = blankImage (height/3, width)    
+    blank = blankImage (height/BOUNDARY_SIZE, width)    
     
     #Crop and leave the lower portion
-    crop_Down = image[height - (height/3):height, 0:width]
+    crop_Down = image[height - (height/BOUNDARY_SIZE):height, 0:width]
     cv2.imshow("Down", crop_Down)
     
     #deterines if the mean number of pixels has increased passed a threshold
@@ -66,11 +71,11 @@ Returns 1 if true
 def isLeft(image): 
     #Creates a bank image the size of the area we want to cover
     width, height = frameSize(image)
-    blank = blankImage (height, width/3)
+    blank = blankImage (height, width/BOUNDARY_SIZE)
     #cv2.imshow("left blank", blank)
     
     #Crop and leave the left portion
-    crop_Left = image[0:height, 0:width/3]
+    crop_Left = image[0:height, 0:width/BOUNDARY_SIZE]
     cv2.imshow("Left", crop_Left)
     
     #deterines if the mean number of pixels has increased passed a threshold
@@ -88,11 +93,11 @@ Returns 1 if true
 def isRight(image): 
     #Creates a bank image the size of the area we want to cover
     width, height = frameSize(image)
-    blank = blankImage (height, width/3)
+    blank = blankImage (height, width/BOUNDARY_SIZE)
     #cv2.imshow("right blank", blank)
     
     #Crop and leave the right portion
-    crop_Right = image[0:height, width - (width/3):width]
+    crop_Right = image[0:height, width - (width/BOUNDARY_SIZE):width]
     cv2.imshow("Right", crop_Right)
     
     #deterines if the mean number of pixels has increased passed a threshold
@@ -114,9 +119,10 @@ def checkBoundaries(image):
     if isLeft(image) == 1:
         print "Leftoooo" # Correective measure call
     if isUp(image) == 1: 
-        print "Upoooo"
+        print "Upoooo" # Correective measure call
     if isDown(image): 
-        print "Downoo"
+        print "Downoo" # Correective measure call
+
 
 def test():
     a = blankImage(720, 1280)
@@ -144,7 +150,7 @@ def main():
         #numpy means of colors.
         meanRed = np.mean(Red_thresh)
         
-        #Calculating which color has prominance based on the mean 
+        #Calculating if the color we want is taking prominence 
         #Also checking if the color is above the threshold we give
         #if (meanRed > 5): 
             #print "Red Detected"
@@ -161,4 +167,4 @@ def main():
     # When everything done, release the capture
     cap.release()
     cv2.destroyAllWindows()        
-main()
+#main()
