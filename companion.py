@@ -123,6 +123,21 @@ def checkBoundaries(image):
     if isDown(image): 
         print "Downoo" # Correective measure call
 
+"""
+Checks if the object is too close to the camera or too far.
+It also calls functions to correct the dictance.
+"""
+def checkDistance(image): 
+    image_count = np.mean(image)
+    
+    #Too close 
+    if image_count > 200: 
+        print "Too Close" #corrective function if too close. 
+    
+    #Too far
+    if (image_count > 10) and (image_count < 200): 
+        print "Too Far"  #corrective function if too far. 
+ 
 
 def test():
     a = blankImage(720, 1280)
@@ -139,7 +154,7 @@ def main():
     while(True): 
     #for i in range(0, 1):
         # Capture frame-by-frame
-        ret, frame = cap.read()  
+        ret, frame = cap.read()  # Correective measure call
                 
         Red_MIN = np.array([0, 0, 200])
         Red_MAX = np.array([100, 100, 255])         
@@ -156,7 +171,8 @@ def main():
             #print "Red Detected"
             #print meanRed
         
-        checkBoundaries(Red_thresh)
+        #checkBoundaries(Red_thresh)
+        checkDistance(Red_thresh)
             
         # Display the resulting frame
         cv2.imshow('frame', frame)
