@@ -33,7 +33,7 @@ def isUp(image):
     
     #crop and leave the top third
     crop_Up = image[0:height/BOUNDARY_SIZE, 0:width]
-    cv2.imshow("Up", crop_Up)
+    #cv2.imshow("Up", crop_Up)
     
     #deterines if the mean number of pixels has increased passed a threshold
     image_count = np.mean(crop_Up)
@@ -54,7 +54,7 @@ def isDown(image):
     
     #Crop and leave the lower portion
     crop_Down = image[height - (height/BOUNDARY_SIZE):height, 0:width]
-    cv2.imshow("Down", crop_Down)
+    #cv2.imshow("Down", crop_Down)
     
     #deterines if the mean number of pixels has increased passed a threshold
     image_count = np.mean(crop_Down)
@@ -76,7 +76,7 @@ def isLeft(image):
     
     #Crop and leave the left portion
     crop_Left = image[0:height, 0:width/BOUNDARY_SIZE]
-    cv2.imshow("Left", crop_Left)
+    #cv2.imshow("Left", crop_Left)
     
     #deterines if the mean number of pixels has increased passed a threshold
     image_count = np.mean(crop_Left)
@@ -98,7 +98,7 @@ def isRight(image):
     
     #Crop and leave the right portion
     crop_Right = image[0:height, width - (width/BOUNDARY_SIZE):width]
-    cv2.imshow("Right", crop_Right)
+    #cv2.imshow("Right", crop_Right)
     
     #deterines if the mean number of pixels has increased passed a threshold
     image_count = np.mean(crop_Right)
@@ -131,18 +131,32 @@ def checkDistance(image):
     image_count = np.mean(image)
     
     #Too close 
-    if image_count > 200: 
+    if image_count > 10: 
         print "Too Close" #corrective function if too close. 
     
     #Too far
-    if (image_count > 10) and (image_count < 200): 
+    if (image_count > 0.5) and (image_count < 2): 
         print "Too Far"  #corrective function if too far. 
  
-
+"""
+For Test Purposes. Ignore!!
+"""
 def test():
     a = blankImage(720, 1280)
     isRight(a)
 #test()
+
+"""
+Takes in an image. 
+If the picture has colors in teh range specified, 
+it returns a black and white picture with white being where the 
+color range is. otherwise it returns a blank picture. 
+"""
+def inColorRange(image): 
+    color_min = np.array([45, 100, 100],np.uint8) #110
+    color_max = np.array([90, 255, 255],np.uint8) #150    
+    thresh = cv2.inRange(image, color_min, color_max)
+    return thresh
 
 """
 This function is adapted from homework 3 task 2. 
@@ -154,29 +168,27 @@ def main():
     while(True): 
     #for i in range(0, 1):
         # Capture frame-by-frame
-        ret, frame = cap.read()  # Correective measure call
+        ret, frame = cap.read()        
+        hsvFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
                 
-        Red_MIN = np.array([0, 0, 200])
-        Red_MAX = np.array([100, 100, 255])         
-       
         #thresholded color counts. 
-        Red_thresh = cv2.inRange(frame, Red_MIN, Red_MAX)
+        color_thresh = inColorRange(hsvFrame)
         
         #numpy means of colors.
-        meanRed = np.mean(Red_thresh)
+        meanColor = np.mean(color_thresh)
         
         #Calculating if the color we want is taking prominence 
         #Also checking if the color is above the threshold we give
-        #if (meanRed > 5): 
-            #print "Red Detected"
-            #print meanRed
+        #if (meanColor > 3): 
+            #print "Color Detected" #This is signal to start following
+            #print meanColor
         
-        #checkBoundaries(Red_thresh)
-        checkDistance(Red_thresh)
+        checkBoundaries(color_thresh)
+        checkDistance(color_thresh)
             
         # Display the resulting frame
-        cv2.imshow('frame', frame)
-        #cv2.imshow('thresh', Red_thresh)
+        #cv2.imshow('frame', frame)
+        cv2.imshow('thresh', color_thresh)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     
